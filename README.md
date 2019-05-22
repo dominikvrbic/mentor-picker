@@ -15,15 +15,14 @@
 4. Open localhost:8080 browser
 
 ## Sample data
-
-Username: korijen
-Password: NecesRazbojnice
-Role: admin
-
-Username: ivica
-Password: test
-Role: student
-
-Username: zlatko
-Password: test
-Role: professor
+*Username:* korijen  
+*Password:* NecesRazbojnice  
+*Role:* admin  
+  
+*Username:* ivica  
+*Password:* test  
+*Role:* student  
+  
+*Username:* zlatko  
+*Password:* test  
+*Role:* professor  
