@@ -1,6 +1,6 @@
 <template>
-  <v-app id="inspire">
-    <v-content>
+  <v-content>
+    <v-form @submit.prevent="submit">
       <v-container fluid fill-height>
         <v-layout align-center justify-center>
           <v-flex xs12 sm8 md4>
@@ -16,6 +16,7 @@
                     name="login"
                     label="Login"
                     type="text"
+                    @keyup.native.enter="submit"
                     :rules="usernameValid"
                   ></v-text-field>
                   <v-text-field
@@ -25,64 +26,72 @@
                     name="password"
                     label="Password"
                     type="password"
+                    @keyup.native.enter="submit"
                     :rules="passwordValid"
                   ></v-text-field>
                 </v-form>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn @click.prevent="submit" color="primary">Login</v-btn>
+                <v-btn type="submit" color="primary">Login</v-btn>
               </v-card-actions>
             </v-card>
+            <v-alert :value="true" type="error" v-if="submitErr">
+              {{submitErr}}
+            </v-alert>
           </v-flex>
         </v-layout>
       </v-container>
-    </v-content>
-  </v-app>
+    </v-form>
+  </v-content>
 </template>
 
 <script>
-  import api from '../api';
+import api from '../api';
 
-  export default {
-    props: {
-      source: String
+export default {
+  props: {
+    source: String,
+  },
+  data() {
+    return {
+      username: '',
+      password: '',
+      submitErr: null,
+    };
+  },
+  computed: {
+    usernameValid() {
+      if (!this.username.length) {
+        return ['Required'];
+      }
+      return [];
     },
-    data() {
-      return {
-          username: '',
-          password: '',
-      };
+    passwordValid() {
+      if (!this.password.length) {
+        return ['Required'];
+      }
+      return [];
     },
-    computed: {
-        usernameValid() {
-            if (!this.username.length) {
-                return ['Required'];
-            } else {
-                return [];
-            }
-        },
-        passwordValid() {
-            if (!this.password.length) {
-                return ['Required'];
-            } else {
-                return [];
-            }
+  },
+  methods: {
+    async submit() {
+      if (!this.username || !this.password) {
+        return;
+      }
+
+      try {
+        await api.post('http://localhost:8000/login', {
+          username: this.username,
+          password: this.password,
+        }, { withCredentials: true });
+        this.$emit('loggedIn');
+      } catch (err) {
+        if (err.response.data && err.response.data.error) {
+          this.submitErr = err.response.data.error;
         }
+      }
     },
-    methods: {
-        async submit() {
-            if (!this.username && !this.password) {
-                return;
-            }
-
-            const resp = await api.post('http://localhost:8000/login', {
-                username: this.username,
-                password: this.password
-            }, {withCredentials: true});
-
-
-        }
-    }
-  }
+  },
+};
 </script>
