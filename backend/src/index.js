@@ -3,6 +3,7 @@ const morgan = require('morgan'); // Stupid defaults
 import cookieSession from 'cookie-session';
 import cors from 'cors';
 import db from './db';
+import * as dbFunc from './dbFunctions'; 
 import bcrypt from 'bcrypt';
 
 const app = express();
@@ -22,13 +23,23 @@ app.use(cookieSession({
 }));
 app.use(morgan('combined'));
 
-app.get('/', (req, res) => {
-    console.log('Ses: ', req.session);
-    if (req.session.user_id) {
-        res.send('Wilkomen sie bitte ja!');
-    } else {
-        res.status(401).send('Neces, razbojnice');
+app.get('/authStatus', async (req, res) => {
+    const userID = req.session.user_id;
+    if (!userID) {
+        res.status(401).json({loggedIn: false});
+        return;
     }
+
+    const [ user, roles ] = await Promise.all([
+        dbFunc.userById(userID),
+        dbFunc.rolesForUser(userID)
+    ]);
+    delete user.password_hash; // Don't send password hash to anyone
+    user.roles = roles;
+    res.json({
+        loggedIn: true,
+        user
+    });
 });
 
 app.post('/login', (req, res) => {
@@ -38,13 +49,12 @@ app.post('/login', (req, res) => {
         return;
     }
 
-    db('users').where({ username }).first().then(userRow => {
+    dbFunc.userByName(username).then(userRow => {
         if (!userRow) {
             res.status(403).json({error: 'no_user'});
             return;
         }
 
-        console.log('Gotten sie user row: ', userRow);
         bcrypt.compare(password, userRow.password_hash, async (err, passwordsMatch) => {
             if (err) {
                 res.sendStatus(500);
@@ -53,19 +63,25 @@ app.post('/login', (req, res) => {
 
             if (passwordsMatch) {
                 delete userRow.password_hash;
-                const roles = await db('users_roles')
-                    .join('roles', 'roles.id', 'users_roles.role_id')
-                    .where({user_id: userRow.id});
+                const roles = await dbFunc.rolesForUser(userRow.id);
                 userRow.roles = roles;
                 req.session.user_id = userRow.id;
                 req.session.user_username = userRow.username;
                 req.session.save();
-                res.json(userRow);
+                res.json({
+                    user: userRow,
+                    loggedIn: true
+                });
             } else {
-                res.status(403).json({error: 'auth_fail'});
+                res.status(403).json({error: 'auth_fail', loggedIn: false});
             }
         });
     });
+});
+
+app.post('/logout', (req, res) => {
+    req.session = null;
+    res.sendStatus(200);
 });
 
 app.listen(port, () => console.log(`App listening on port ${port}!`));
