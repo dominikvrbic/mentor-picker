@@ -13,3 +13,17 @@
 2. Go to backend dir in first terminal and run npm run dev
 3. Go to frontend dir in second terminal and run npm run serve
 4. Open localhost:8080 browser
+
+## Sample data
+
+Username: korijen
+Password: NecesRazbojnice
+Role: admin
+
+Username: ivica
+Password: test
+Role: student
+
+Username: zlatko
+Password: test
+Role: professor
