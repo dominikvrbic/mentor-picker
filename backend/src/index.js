@@ -84,4 +84,20 @@ app.post('/logout', (req, res) => {
     res.sendStatus(200);
 });
 
+app.get('/fields', async (req, res) => {
+    res.json(await db('fields'));
+});
+
+app.post('/theme', async (req, res) => {
+    const userID = req.session.user_id;
+    if (!userID) {
+        res.status(401).json({loggedIn: false});
+        return;
+    }
+
+    await dbFunc.setTheme(userID, req.body);
+
+    res.sendStatus(201);
+});
+
 app.listen(port, () => console.log(`App listening on port ${port}!`));

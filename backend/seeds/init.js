@@ -44,6 +44,12 @@ exports.seed = function (knex, Promise) {
         },
         {
           id: 3,
+          username: 'francek',
+          display_name: 'Student Francek',
+          password_hash: '$2b$10$bgoCXvzRhbt5Ab8JszJKMejEuEa.gwTTrYteNa.WmF0AspnWvgOvu' // test
+        },
+        {
+          id: 4,
           username: 'zlatko',
           display_name: 'Profesor Zlatko',
           password_hash: '$2b$10$bgoCXvzRhbt5Ab8JszJKMejEuEa.gwTTrYteNa.WmF0AspnWvgOvu' // test
@@ -62,6 +68,10 @@ exports.seed = function (knex, Promise) {
         },
         {
           user_id: 3,
+          role_id: 2,
+        },
+        {
+          user_id: 4,
           role_id: 3,
         },
       ]);

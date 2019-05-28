@@ -62,20 +62,58 @@
         </template>
         </v-list>
       </v-container>
+      <v-container v-if="loaded">
+        <v-form @submit.prevent="saveTheme">
+          <v-card>
+            <v-card-text>
+              <v-select :items="fields" label="Podrucje" item-value="id" item-text="name" v-model="themeData.field" />
+              <v-text-field label="Naslov" v-model="themeData.title"></v-text-field>
+              <v-textarea label="Opis" v-model="themeData.description"></v-textarea>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer />
+              <v-btn type="submit" color="primary">Spremi</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-form>
+      </v-container>
     </v-content>
 </v-app>
 </template>
 
 <script>
+import Api from '../api';
 export default {
   data: () => ({
     drawer: null,
+    loaded: false,
+    fields: null,
+    themeData: {
+      field: 1,
+      title: '',
+      description: '',
+    }
   }),
+
+  created() {
+    this.getFields().then((fields) => {
+      this.fields = fields;
+      console.log(fields);
+      this.loaded = true;
+    });
+  },
 
   methods: {
     logout() {
       this.$emit('logout');
     },
+    async getFields() {
+      const resp = await Api.get('/fields');
+      return resp.data;
+    },
+    saveTheme() {
+      return Api.post('/theme', this.themeData);
+    }
   },
   props: {
     user: Object,
