@@ -34,7 +34,12 @@ exports.up = function(knex, Promise) {
             t.integer('subject_id').unsigned().notNull().references('subjects.id');
             t.integer('grade').unsigned();
         }),
-        knex.schema.createTable('theme', (t) => {
+        knex.schema.createTable('professors_subjects', (t) => {
+            t.increments('id').unsigned().primary();
+            t.integer('professor_id').unsigned().notNull().references('users.id');
+            t.integer('subject_id').unsigned().notNull().references('subjects.id');
+        }),
+        knex.schema.createTable('themes', (t) => {
             t.increments('id').unsigned().primary();
             t.integer('field_id').unsigned().notNull().references('fields.id');
             t.integer('student_id').unsigned().notNull().references('users.id');

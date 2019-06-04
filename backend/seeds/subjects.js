@@ -1,5 +1,6 @@
 exports.seed = function(knex, Promise) {
   return knex('students_subjects').del()
+    .then(() => knex('professors_subjects').del())
     .then(() => knex('subjects').del())
     .then(() => knex('fields').del())
     .then(() => {
@@ -39,50 +40,24 @@ exports.seed = function(knex, Promise) {
       ]);
     })
     .then(() => {
-      return knex('students_subjects').insert([
-        {subject_id: 1, student_id: 2, grade: 5},
-        {subject_id: 2, student_id: 2, grade: 4},
-        {subject_id: 3, student_id: 2, grade: 2},
-        {subject_id: 4, student_id: 2, grade: 5},
-        {subject_id: 5, student_id: 2, grade: 4},
-        {subject_id: 6, student_id: 2, grade: 3},
-        {subject_id: 7, student_id: 2, grade: 2},
-        {subject_id: 8, student_id: 2, grade: 4},
-        {subject_id: 9, student_id: 2, grade: 3},
-        {subject_id: 10, student_id: 2, grade: 5},
-        {subject_id: 11, student_id: 2, grade: 2},
-        {subject_id: 12, student_id: 2, grade: 2},
-        {subject_id: 13, student_id: 2, grade: 3},
-        {subject_id: 14, student_id: 2, grade: 5},
-        {subject_id: 15, student_id: 2, grade: 4},
-        {subject_id: 16, student_id: 2, grade: 3},
-        {subject_id: 17, student_id: 2, grade: 5},
-        {subject_id: 18, student_id: 2, grade: 3},
-        {subject_id: 19, student_id: 2, grade: 2},
-        {subject_id: 20, student_id: 2, grade: 4},
-        {subject_id: 21, student_id: 2, grade: 5},
-
-        {subject_id: 1, student_id: 3, grade: 3},
-        {subject_id: 2, student_id: 3, grade: 4},
-        {subject_id: 3, student_id: 3, grade: 2},
-        {subject_id: 4, student_id: 3, grade: 5},
-        {subject_id: 5, student_id: 3, grade: 4},
-        {subject_id: 6, student_id: 3, grade: 4},
-        {subject_id: 7, student_id: 3, grade: 5},
-        {subject_id: 8, student_id: 3, grade: 4},
-        {subject_id: 9, student_id: 3, grade: 3},
-        {subject_id: 10, student_id: 3, grade: 2},
-        {subject_id: 11, student_id: 3, grade: 3},
-        {subject_id: 12, student_id: 3, grade: 4},
-        {subject_id: 13, student_id: 3, grade: 5},
-        {subject_id: 14, student_id: 3, grade: 5},
-        {subject_id: 15, student_id: 3, grade: 3},
-        {subject_id: 16, student_id: 3, grade: 2},
-        {subject_id: 17, student_id: 3, grade: 4},
-        {subject_id: 18, student_id: 3, grade: 5},
-        {subject_id: 19, student_id: 3, grade: 3},
-        {subject_id: 20, student_id: 3, grade: 2},
-        {subject_id: 21, student_id: 3, grade: 5},
+      return knex('professors_subjects').insert([
+        {subject_id: 5, professor_id: 6},
+        {subject_id: 6, professor_id: 4},
+        {subject_id: 17, professor_id: 5},
       ]);
+    })
+    .then(() => {
+      const studentIds = [2, 3, 7];
+      const rows = [];
+      studentIds.forEach((studentId) => {
+        for (let i = 1; i <= 21; ++i) {
+          rows.push({
+            subject_id: i,
+            student_id: studentId,
+            grade: Math.floor(Math.random() * 4 + 2), // 2 to 5 integer
+          });
+        }
+      });
+      return knex('students_subjects').insert(rows);
     });
 };

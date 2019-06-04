@@ -53,7 +53,25 @@ exports.seed = function (knex, Promise) {
           username: 'zlatko',
           display_name: 'Profesor Zlatko',
           password_hash: '$2b$10$bgoCXvzRhbt5Ab8JszJKMejEuEa.gwTTrYteNa.WmF0AspnWvgOvu' // test
-        }
+        },
+        {
+          id: 5,
+          username: 'vesna',
+          display_name: 'Profesorica Vesna',
+          password_hash: '$2b$10$bgoCXvzRhbt5Ab8JszJKMejEuEa.gwTTrYteNa.WmF0AspnWvgOvu' // test
+        },
+        {
+          id: 6,
+          username: 'chicha',
+          display_name: 'Drug Chicha',
+          password_hash: '$2b$10$bgoCXvzRhbt5Ab8JszJKMejEuEa.gwTTrYteNa.WmF0AspnWvgOvu' // test
+        },
+        {
+          id: 7,
+          username: 'gordan',
+          display_name: 'Student Gordan Bez Zemlje',
+          password_hash: '$2b$10$bgoCXvzRhbt5Ab8JszJKMejEuEa.gwTTrYteNa.WmF0AspnWvgOvu' // test
+        },
       ]);
     })
     .then(() => {
@@ -73,6 +91,18 @@ exports.seed = function (knex, Promise) {
         {
           user_id: 4,
           role_id: 3,
+        },
+        {
+          user_id: 5,
+          role_id: 3
+        },
+        {
+          user_id: 6,
+          role_id: 3
+        },
+        {
+          user_id: 7,
+          role_id: 2
         },
       ]);
     });

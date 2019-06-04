@@ -111,4 +111,37 @@ app.post('/theme', async (req, res) => {
     res.sendStatus(201);
 });
 
+app.get('/professorThemes', async (req, res) => {
+    const userID = req.session.user_id;
+    if (!userID) {
+        res.status(401).json({loggedIn: false});
+        return;
+    }
+
+    const themes = await dbFunc.getThemesForProfessor(userID);
+    res.json(themes);
+});
+
+app.put('/professorThemes/:themeID/accept', async (req, res) => {
+    const userID = req.session.user_id;
+    if (!userID) {
+        res.status(401).json({loggedIn: false});
+        return;
+    }
+
+    await dbFunc.acceptTheme(userID, req.params.themeID);
+    res.sendStatus(200);
+});
+
+app.delete('/professorThemes/:themeID/accept', async (req, res) => {
+    const userID = req.session.user_id;
+    if (!userID) {
+        res.status(401).json({loggedIn: false});
+        return;
+    }
+
+    await dbFunc.unacceptTheme(userID, req.params.themeID);
+    res.sendStatus(200);
+});
+
 app.listen(port, () => console.log(`App listening on port ${port}!`));
