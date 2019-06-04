@@ -88,6 +88,17 @@ app.get('/fields', async (req, res) => {
     res.json(await db('fields'));
 });
 
+app.get('/theme', async (req, res) => {
+    const userID = req.session.user_id;
+    if (!userID) {
+        res.status(401).json({loggedIn: false});
+        return;
+    }
+
+    const theme = await dbFunc.getTheme(userID);
+    res.json(theme);
+});
+
 app.post('/theme', async (req, res) => {
     const userID = req.session.user_id;
     if (!userID) {

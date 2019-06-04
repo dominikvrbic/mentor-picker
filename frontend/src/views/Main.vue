@@ -66,7 +66,13 @@
         <v-form @submit.prevent="saveTheme">
           <v-card>
             <v-card-text>
-              <v-select :items="fields" label="Podrucje" item-value="id" item-text="name" v-model="themeData.field" />
+              <v-select
+                :items="fields"
+                label="Podrucje"
+                item-value="id"
+                item-text="name"
+                v-model="themeData.field"
+              />
               <v-text-field label="Naslov" v-model="themeData.title"></v-text-field>
               <v-textarea label="Opis" v-model="themeData.description"></v-textarea>
             </v-card-text>
@@ -83,6 +89,7 @@
 
 <script>
 import Api from '../api';
+
 export default {
   data: () => ({
     drawer: null,
@@ -92,7 +99,7 @@ export default {
       field: 1,
       title: '',
       description: '',
-    }
+    },
   }),
 
   created() {
@@ -100,6 +107,9 @@ export default {
       this.fields = fields;
       console.log(fields);
       this.loaded = true;
+    });
+    this.getTheme().then((theme) => {
+      this.themeData = theme;
     });
   },
 
@@ -111,9 +121,13 @@ export default {
       const resp = await Api.get('/fields');
       return resp.data;
     },
+    async getTheme() {
+      const response = await Api.get('/theme');
+      return response.data;
+    },
     saveTheme() {
       return Api.post('/theme', this.themeData);
-    }
+    },
   },
   props: {
     user: Object,

@@ -18,6 +18,15 @@ export function fields() {
     return db('fields');
 }
 
+export async function getTheme(userID) {
+    const theme = await db('theme').where({student_id: userID}).first();
+    return {
+        field: theme.field_id,
+        title: theme.name,
+        description: theme.description
+    };
+}
+
 export async function setTheme(userID, themeData) {
     const existing = await db('theme').where({student_id: userID}).first();
     if (existing) {
