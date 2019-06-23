@@ -48,7 +48,7 @@ export async function setTheme(userID, themeData) {
     }
 }
 
-export async function getThemesForProfessor(professorID) {
+export function getThemesForProfessor(professorID) {
     return db.select(
             'themes.*',
             'users.username',
@@ -60,7 +60,25 @@ export async function getThemesForProfessor(professorID) {
             this.select('field_id').from('professors_subjects').where({professor_id: professorID});
         })
         .whereNull('professor_id')
-        .orWhere({professor_id: professorID});
+        .orWhere({professor_id: professorID})
+        .orderByRaw(`
+            (
+                (
+                    SELECT AVG(grade)
+                    FROM students_subjects
+                    WHERE students_subjects.student_id = themes.student_id
+                ) / 0.7
+                +
+                ((
+                    SELECT AVG(grade)
+                    FROM students_subjects
+                    INNER JOIN subjects ON subjects.id = students_subjects.subject_id
+                    WHERE students_subjects.student_id = themes.student_id
+                      AND subjects.field_id = themes.field_id
+                ) / 5.0) * 0.3
+            )
+            DESC
+        `);
 }
 
 export async function acceptTheme(professorID, themeID) {
