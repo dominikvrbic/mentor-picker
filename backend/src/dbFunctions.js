@@ -56,10 +56,14 @@ export function getThemesForProfessor(professorID) {
         )
         .from('themes')
         .join('users', 'themes.student_id', 'users.id')
-        .whereIn('field_id', function () {
-            this.select('field_id').from('professors_subjects').where({professor_id: professorID});
+        .whereIn('field_id', (q) => {
+            return q
+                .select('subjects.field_id')
+                .from('professors_subjects')
+                .join('subjects', 'subjects.id', 'professors_subjects.subject_id')
+                .where({professor_id: professorID});
         })
-        .whereNull('professor_id')
+        .where(q => q.whereNull('professor_id').orWhere({professor_id: professorID}))
         .orWhere({professor_id: professorID})
         .orderByRaw(`
             (
