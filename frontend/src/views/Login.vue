@@ -84,7 +84,7 @@ export default {
       }
 
       try {
-        await Api.post('http://localhost:8000/login', {
+        await Api.post('/login', {
           username: this.username,
           password: this.password,
         }, { withCredentials: true });
