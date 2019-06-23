@@ -21,9 +21,9 @@ export function fields() {
 export async function getTheme(userID) {
     const theme = await db('themes').where({student_id: userID}).first();
     return {
-        field: theme.sfield_id,
-        title: theme.sname,
-        description: theme.sdescription
+        field: theme.field_id,
+        title: theme.name,
+        description: theme.description
     };
 }
 
