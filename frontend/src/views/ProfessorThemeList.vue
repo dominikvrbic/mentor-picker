@@ -4,7 +4,10 @@
     <v-list>
       <v-list-tile v-for="theme in themes" :key="theme.id">
         <v-list-tile-action>
-          <v-checkbox v-model="acceptStates[theme.id]" @change="() => toggleAccept(theme.id)"></v-checkbox>
+          <v-checkbox
+            v-model="acceptStates[theme.id]"
+            @change="() => toggleAccept(theme.id)"
+          ></v-checkbox>
         </v-list-tile-action>
         <v-list-tile-content>
           <v-list-tile-title>{{theme.name}}</v-list-tile-title>
@@ -51,7 +54,7 @@ export default {
   created() {
     this.getThemes().then((themes) => {
       themes.forEach((theme) => {
-        this.acceptStates[theme.id] = theme.professor_id == this.user.id;
+        this.acceptStates[theme.id] = theme.professor_id === this.user.id;
       });
       this.themes = themes;
     });

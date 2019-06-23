@@ -1,31 +1,6 @@
 <template>
 <v-app id="mentor-picker">
-    <v-navigation-drawer
-      v-model="drawer"
-      fixed
-      app
-    >
-      <v-list dense>
-        <v-list-tile>
-          <v-list-tile-action>
-            <v-icon>home</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Nesto</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile>
-          <v-list-tile-action>
-            <v-icon>contact_mail</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Nesto drugo</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-    </v-navigation-drawer>
     <v-toolbar color="primary" dark fixed app>
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title>Odabir mentora</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-menu offset-y>
@@ -69,10 +44,8 @@
 </template>
 
 <script>
-import ThemeForm from './ThemeForm';
-import ProfessorThemeList from './ProfessorThemeList';
-
-import Api from '../api';
+import ThemeForm from './ThemeForm.vue';
+import ProfessorThemeList from './ProfessorThemeList.vue';
 
 export default {
   components: {
@@ -85,9 +58,7 @@ export default {
   },
 
   data() {
-    return {
-      drawer: null,
-    };
+    return {};
   },
 
   computed: {

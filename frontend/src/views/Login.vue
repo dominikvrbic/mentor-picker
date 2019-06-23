@@ -1,5 +1,6 @@
 <template>
   <v-content>
+    <div id="bg-particles"></div>
     <v-form @submit.prevent="submit">
       <v-container fluid fill-height>
         <v-layout align-center justify-center>
@@ -47,7 +48,9 @@
 </template>
 
 <script>
-import api from '../api';
+import Api from '../api';
+import 'particles.js';
+import particlesConfig from './particlesjs-config.json';
 
 export default {
   props: {
@@ -81,7 +84,7 @@ export default {
       }
 
       try {
-        await api.post('http://localhost:8000/login', {
+        await Api.post('http://localhost:8000/login', {
           username: this.username,
           password: this.password,
         }, { withCredentials: true });
@@ -93,5 +96,21 @@ export default {
       }
     },
   },
+  mounted() {
+    console.log('Config: ', particlesConfig);
+    window.particlesJS('bg-particles', particlesConfig);
+  },
 };
 </script>
+
+<style>
+#bg-particles {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #00437a;
+  overflow: hidden;
+}
+</style>
