@@ -78,11 +78,11 @@ export function getThemesForProfessor(professorID) {
         .orWhere({professor_id: professorID})
         .orderByRaw(`
             (
-                (
+                ((
                     SELECT AVG(grade)
                     FROM students_subjects
                     WHERE students_subjects.student_id = themes.student_id
-                ) / 0.7
+                ) / 5.0) * 0.7
                 +
                 ((
                     SELECT AVG(grade)
