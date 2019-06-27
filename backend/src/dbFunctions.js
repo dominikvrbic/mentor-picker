@@ -19,11 +19,22 @@ export function fields() {
 }
 
 export async function getTheme(userID) {
-    const theme = await db('themes').where({student_id: userID}).first();
+    const theme = await db.select(
+            'themes.field_id',
+            'themes.name',
+            'themes.description',
+            'themes.professor_id',
+            'professor.username as professor_name',
+        )
+        .from('themes')
+        .leftJoin('users as professor', 'professor.id', 'themes.professor_id')
+        .where({student_id: userID}).first();
     return {
         field: theme.field_id,
         title: theme.name,
-        description: theme.description
+        description: theme.description,
+        professorID: theme.professor_id,
+        professorName: theme.professor_name,
     };
 }
 

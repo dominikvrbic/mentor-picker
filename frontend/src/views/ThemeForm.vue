@@ -1,5 +1,9 @@
 <template>
   <v-container>
+    <v-alert value="true" type="success" v-if="themeAccepted">
+      <h3>Tema prihvacena!</h3>
+      <strong>Profesor: </strong> {{themeData.professorName}}
+    </v-alert>
     <v-form @submit.prevent="saveTheme">
       <v-card>
         <v-card-text>
@@ -9,13 +13,22 @@
             item-value="id"
             item-text="name"
             v-model="themeData.field"
+            :disabled="themeAccepted"
           />
-          <v-text-field label="Naslov" v-model="themeData.title"></v-text-field>
-          <v-textarea label="Opis" v-model="themeData.description"></v-textarea>
+          <v-text-field
+            label="Naslov"
+            v-model="themeData.title"
+            :disabled="themeAccepted"
+          ></v-text-field>
+          <v-textarea
+            label="Opis"
+            v-model="themeData.description"
+            :disabled="themeAccepted"
+          ></v-textarea>
         </v-card-text>
         <v-card-actions>
           <v-spacer/>
-          <v-btn type="submit" color="primary">Spremi</v-btn>
+          <v-btn type="submit" color="primary" :disabled="themeAccepted">Spremi</v-btn>
         </v-card-actions>
       </v-card>
     </v-form>
@@ -63,6 +76,12 @@ export default {
     },
     saveTheme() {
       return Api.post('/theme', this.themeData);
+    },
+  },
+
+  computed: {
+    themeAccepted() {
+      return this.themeData && !!this.themeData.professorID;
     },
   },
 };
