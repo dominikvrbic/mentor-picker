@@ -42,8 +42,18 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer/>
-          <v-btn type="submit" color="primary" :disabled="themeAccepted">Spremi</v-btn>
+          <v-btn
+            type="submit"
+            color="primary"
+            :disabled="themeAccepted || validationErrs.length > 0">
+            Spremi
+          </v-btn>
         </v-card-actions>
+        <v-alert :value="true" type="error" v-if="validationErrs.length > 0">
+            <div v-for="(err, index) in validationErrs" :key="index">
+              {{err}}
+            </div>
+          </v-alert>
       </v-card>
     </v-form>
   </v-container>
@@ -100,6 +110,16 @@ export default {
   computed: {
     themeAccepted() {
       return this.themeData && !!this.themeData.professorID;
+    },
+    validationErrs() {
+      const errs = [];
+      if (!this.themeData.title.trim().length) {
+        errs.push('Morate dati naslov teme');
+      }
+      if (!this.themeData.professors.length) {
+        errs.push('Morate odabrati barem jednog profesora');
+      }
+      return errs;
     },
   },
   watch: {
