@@ -25,6 +25,20 @@
             v-model="themeData.description"
             :disabled="themeAccepted"
           ></v-textarea>
+          <v-subheader>Profesori: </v-subheader>
+          <v-list>
+            <v-list-tile v-for="professor in availableProfessors" :key="professor.id">
+              <v-list-tile-action>
+                <v-checkbox
+                  v-model="themeData.professors"
+                  :value="professor.id"
+                ></v-checkbox>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>{{professor.display_name}}</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </v-list>
         </v-card-text>
         <v-card-actions>
           <v-spacer/>
@@ -51,7 +65,9 @@ export default {
         field: 1,
         title: '',
         description: '',
+        professors: [],
       },
+      availableProfessors: [],
     };
   },
 
@@ -61,7 +77,9 @@ export default {
       this.loaded = true;
     });
     this.getTheme().then((theme) => {
-      this.themeData = theme;
+      if (theme) {
+        this.themeData = theme;
+      }
     });
   },
 
@@ -82,6 +100,16 @@ export default {
   computed: {
     themeAccepted() {
       return this.themeData && !!this.themeData.professorID;
+    },
+  },
+  watch: {
+    'themeData.field': {
+      immediate: true,
+      handler(newField) {
+        Api.get(`/fields/${newField}/professors`).then((professors) => {
+          this.availableProfessors = professors.data;
+        });
+      },
     },
   },
 };

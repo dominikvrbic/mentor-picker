@@ -18,8 +18,22 @@ export function fields() {
     return db('fields');
 }
 
+export async function professorsForField(fieldID) {
+    return db
+        .select('id', 'username', 'display_name')
+        .from('users')
+        .whereIn('id', (q) => {
+            return q
+                .select('professors_subjects.professor_id')
+                .from('professors_subjects')
+                .join('subjects', 'subjects.id', 'professors_subjects.subject_id')
+                .where({field_id: fieldID});
+        });
+}
+
 export async function getTheme(userID) {
     const theme = await db.select(
+            'themes.id',
             'themes.field_id',
             'themes.name',
             'themes.description',
@@ -29,18 +43,27 @@ export async function getTheme(userID) {
         .from('themes')
         .leftJoin('users as professor', 'professor.id', 'themes.professor_id')
         .where({student_id: userID}).first();
+    if (!theme) {
+        return null;
+    }
+
+    const professors = await db
+        .select('professor_id')
+        .from('themes_professors')
+        .where({theme_id: theme.id});
     return {
         field: theme.field_id,
         title: theme.name,
         description: theme.description,
         professorID: theme.professor_id,
         professorName: theme.professor_name,
+        professors: professors.map(professor => professor.professor_id),
     };
 }
 
 export async function setTheme(userID, themeData) {
-    const existing = await db('themes').where({student_id: userID}).first();
-    if (existing) {
+    let theme = await db('themes').where({student_id: userID}).first();
+    if (theme) {
         await db('themes')
             .where({student_id: userID})
             .update({
@@ -56,7 +79,19 @@ export async function setTheme(userID, themeData) {
                 name: themeData.title,
                 description: themeData.description,
             });
+        theme = await db('themes').where({student_id: userID}).first();
     }
+    await db('themes_professors')
+        .where('theme_id', theme.id)
+        .del();
+
+    const newRows = themeData.professors.map((professorID) => {
+        return {
+            professor_id: professorID,
+            theme_id: theme.id,
+        };
+    })
+    await db('themes_professors').insert(newRows);
 }
 
 export function getThemesForProfessor(professorID) {
@@ -66,16 +101,11 @@ export function getThemesForProfessor(professorID) {
             'users.display_name',
         )
         .from('themes')
+        .join('themes_professors', 'themes_professors.theme_id', 'themes.id')
         .join('users', 'themes.student_id', 'users.id')
-        .whereIn('field_id', (q) => {
-            return q
-                .select('subjects.field_id')
-                .from('professors_subjects')
-                .join('subjects', 'subjects.id', 'professors_subjects.subject_id')
-                .where({professor_id: professorID});
-        })
-        .where(q => q.whereNull('professor_id').orWhere({professor_id: professorID}))
-        .orWhere({professor_id: professorID})
+        .where({'themes_professors.professor_id': professorID})
+        .where(q => q.whereNull('themes.professor_id').orWhere({'themes.professor_id': professorID}))
+        .orWhere({'themes.professor_id': professorID})
         .orderByRaw(`
             (
                 ((
@@ -83,6 +113,16 @@ export function getThemesForProfessor(professorID) {
                     FROM students_subjects
                     WHERE students_subjects.student_id = themes.student_id
                 ) / 5.0) * 0.7
+                +
+                (CAST(
+                    EXISTS(
+                        SELECT 1
+                        FROM students_subjects
+                        INNER JOIN subjects ON subjects.id = students_subjects.subject_id
+                        WHERE students_subjects.student_id = themes.student_id
+                        AND subjects.field_id = themes.field_id
+                        AND students_subjects.professor_id = ?
+                    ) AS FLOAT)) * 0.1
                 +
                 ((
                     SELECT AVG(grade)
@@ -93,7 +133,7 @@ export function getThemesForProfessor(professorID) {
                 ) / 5.0) * 0.3
             )
             DESC
-        `);
+        `, [professorID]);
 }
 
 export async function acceptTheme(professorID, themeID) {

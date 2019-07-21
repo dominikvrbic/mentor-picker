@@ -48,12 +48,18 @@ exports.seed = function(knex, Promise) {
     })
     .then(() => {
       const studentIds = [2, 3, 7];
+      const subjectsProfessors = {
+        5: 6,
+        6: 4,
+        17: 5,
+      };
       const rows = [];
       studentIds.forEach((studentId) => {
         for (let i = 1; i <= 21; ++i) {
           rows.push({
             subject_id: i,
             student_id: studentId,
+            professor_id: subjectsProfessors[i] || null,
             grade: Math.floor(Math.random() * 4 + 2), // 2 to 5 integer
           });
         }

@@ -10,7 +10,7 @@ const app = express();
 const port = 8000;
 
 app.use(cors({
-    origin: 'http://localhost:8080',
+    origin: 'http://localhost:8086',
     credentials: true,
 }));
 app.use(express.json());
@@ -86,6 +86,10 @@ app.post('/logout', (req, res) => {
 
 app.get('/fields', async (req, res) => {
     res.json(await db('fields'));
+});
+
+app.get('/fields/:fieldID/professors', async (req, res) => {
+    res.json(await dbFunc.professorsForField(req.params.fieldID));
 });
 
 app.get('/theme', async (req, res) => {

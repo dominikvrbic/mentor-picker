@@ -32,6 +32,7 @@ exports.up = function(knex, Promise) {
             t.increments('id').unsigned().primary();
             t.integer('student_id').unsigned().notNull().references('users.id');
             t.integer('subject_id').unsigned().notNull().references('subjects.id');
+            t.integer('professor_id').unsigned().references('users.id');
             t.integer('grade').unsigned();
         }),
         knex.schema.createTable('professors_subjects', (t) => {
@@ -47,10 +48,13 @@ exports.up = function(knex, Promise) {
             t.string('name').notNull();
             t.string('description').notNull();
         }),
+        knex.schema.createTable('themes_professors', (t) => {
+            t.increments('id').unsigned().primary();
+            t.integer('theme_id').unsigned().notNull().references('themes.id');
+            t.integer('professor_id').unsigned().notNull().references('users.id');
+        }),
     ]);
 };
-
-
 
 exports.down = function(knex, Promise) {
   
