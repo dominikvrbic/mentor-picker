@@ -1,9 +1,10 @@
 module.exports = {
   development: {
-    client: 'mysql2',
+    client: 'pg',
     connection: {
+      port: '47398',
       database: 'kodovi',
-      user:     'kodovi',
+      user: 'kodovi',
       password: 'kodovi'
     },
     migrations: {
@@ -12,10 +13,12 @@ module.exports = {
   },
 
   staging: {
-    client: 'mysql',
+    client: 'pg',
     connection: {
+      port: '47398',
+
       database: 'kodovi',
-      user:     'kodovi',
+      user: 'kodovi',
       password: 'kodovi'
     },
     pool: {
@@ -28,10 +31,13 @@ module.exports = {
   },
 
   production: {
-    client: 'mysql',
+    client: 'pg',
     connection: {
+
+      port: '47398',
+
       database: 'kodovi',
-      user:     'kodovi',
+      user: 'kodovi',
       password: 'kodovi'
     },
     pool: {

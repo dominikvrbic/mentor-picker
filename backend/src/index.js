@@ -3,21 +3,21 @@ const morgan = require('morgan'); // Stupid defaults
 import cookieSession from 'cookie-session';
 import cors from 'cors';
 import db from './db';
-import * as dbFunc from './dbFunctions'; 
+import * as dbFunc from './dbFunctions';
 import bcrypt from 'bcrypt';
 
 const app = express();
 const port = 8000;
 
 app.use(cors({
-    origin: 'http://localhost:8086',
+    origin: 'http://localhost:8080',
     credentials: true,
 }));
 app.use(express.json());
 app.use(cookieSession({
     name: 'session',
     keys: ['NecesRazbojniceMasonski42'],
-  
+
     // Cookie Options
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
@@ -26,11 +26,13 @@ app.use(morgan('combined'));
 app.get('/authStatus', async (req, res) => {
     const userID = req.session.user_id;
     if (!userID) {
-        res.status(401).json({loggedIn: false});
+        res.status(401).json({
+            loggedIn: false
+        });
         return;
     }
 
-    const [ user, roles ] = await Promise.all([
+    const [user, roles] = await Promise.all([
         dbFunc.userById(userID),
         dbFunc.rolesForUser(userID)
     ]);
@@ -43,7 +45,10 @@ app.get('/authStatus', async (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-    const { username, password } = req.body;
+    const {
+        username,
+        password
+    } = req.body;
     if (!username || !password) {
         res.status(400).json('Missing username or password');
         return;
@@ -51,7 +56,9 @@ app.post('/login', (req, res) => {
 
     dbFunc.userByName(username).then(userRow => {
         if (!userRow) {
-            res.status(403).json({error: 'no_user'});
+            res.status(403).json({
+                error: 'no_user'
+            });
             return;
         }
 
@@ -73,7 +80,10 @@ app.post('/login', (req, res) => {
                     loggedIn: true
                 });
             } else {
-                res.status(403).json({error: 'auth_fail', loggedIn: false});
+                res.status(403).json({
+                    error: 'auth_fail',
+                    loggedIn: false
+                });
             }
         });
     });
@@ -95,7 +105,9 @@ app.get('/fields/:fieldID/professors', async (req, res) => {
 app.get('/theme', async (req, res) => {
     const userID = req.session.user_id;
     if (!userID) {
-        res.status(401).json({loggedIn: false});
+        res.status(401).json({
+            loggedIn: false
+        });
         return;
     }
 
@@ -106,7 +118,9 @@ app.get('/theme', async (req, res) => {
 app.post('/theme', async (req, res) => {
     const userID = req.session.user_id;
     if (!userID) {
-        res.status(401).json({loggedIn: false});
+        res.status(401).json({
+            loggedIn: false
+        });
         return;
     }
 
@@ -118,7 +132,9 @@ app.post('/theme', async (req, res) => {
 app.get('/professorThemes', async (req, res) => {
     const userID = req.session.user_id;
     if (!userID) {
-        res.status(401).json({loggedIn: false});
+        res.status(401).json({
+            loggedIn: false
+        });
         return;
     }
 
@@ -129,7 +145,9 @@ app.get('/professorThemes', async (req, res) => {
 app.put('/professorThemes/:themeID/accept', async (req, res) => {
     const userID = req.session.user_id;
     if (!userID) {
-        res.status(401).json({loggedIn: false});
+        res.status(401).json({
+            loggedIn: false
+        });
         return;
     }
 
@@ -140,7 +158,9 @@ app.put('/professorThemes/:themeID/accept', async (req, res) => {
 app.delete('/professorThemes/:themeID/accept', async (req, res) => {
     const userID = req.session.user_id;
     if (!userID) {
-        res.status(401).json({loggedIn: false});
+        res.status(401).json({
+            loggedIn: false
+        });
         return;
     }
 

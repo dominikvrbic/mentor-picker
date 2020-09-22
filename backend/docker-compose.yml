@@ -1,0 +1,12 @@
+version: "3"
+services:
+  putujemLokalno-database:
+    container_name: mentor
+    image: postgres:10-alpine
+    restart: always
+    ports:
+      - "47398:5432"
+    environment:
+      POSTGRES_USER: kodovi
+      POSTGRES_PASSWORD: kodovi
+      POSTGRES_DB: kodovi
